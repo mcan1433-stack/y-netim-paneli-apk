@@ -1,0 +1,4391 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Satış Paneli</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --secondary: #06d6a0;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --glass: rgba(30, 41, 59, 0.7);
+            --neon-glow: 0 0 15px rgba(124, 58, 237, 0.5);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* DÜZELTME: Form ve tablo görünürlüğü */
+        .modal input, 
+        .modal select, 
+        .modal textarea,
+        .data-table td,
+        .data-table th,
+        .invoice,
+        .invoice * {
+            color: #333 !important;
+        }
+
+        .modal input, 
+        .modal select, 
+        .modal textarea,
+        .modal .form-control {
+            background: #ffffff !important;
+            color: #333 !important;
+        }
+
+        .data-table td, 
+        .data-table th {
+            background-color: #ffffff !important;
+            color: #333 !important;
+        }
+
+        /* Option etiketleri için görünürlük düzeltmesi */
+        select option {
+            background: #ffffff;
+            color: #333;
+            padding: 10px;
+        }
+
+        /* DÜZELTME: Ana UI elementleri için renk düzeni */
+        .input-group input,
+        .form-control,
+        .chat-input,
+        .modal .form-control,
+        .data-table td,
+        .data-table th {
+            background: var(--dark-light) !important;
+            color: var(--light) !important;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .data-table thead {
+            background: rgba(124, 58, 237, 0.3) !important;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            top: -150px;
+            left: -150px;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.2;
+            bottom: -150px;
+            right: -150px;
+        }
+
+        .login-box {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+            box-shadow: var(--neon-glow);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            height: 80px;
+            margin-bottom: 15px;
+            max-width: 200px;
+            object-fit: contain;
+        }
+
+        .logo-container h1 {
+            font-size: 28px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--light);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 18px;
+        }
+
+        .login-btn {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-progress {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .login-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            border-radius: 2px;
+            width: 0%;
+            transition: width 1.5s ease;
+        }
+
+        /* Welcome Animation */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .welcome-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-logo {
+            height: 120px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .welcome-subtext {
+            font-size: 18px;
+            color: var(--gray);
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .developer-info {
+            position: absolute;
+            bottom: 30px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Dashboard */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Fixed logo alignment */
+        .sidebar {
+            width: 250px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 0;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header img {
+            height: 40px;
+            max-width: 150px;
+            object-fit: contain;
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Removed header text */
+        .sidebar-header h2 span {
+            display: none;
+        }
+
+        .sidebar-header h2 i {
+            margin-right: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--light);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--light);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-menu i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        /* Chat notification dot */
+        .chat-notification-dot {
+            position: absolute;
+            top: 12px;
+            right: 20px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            display: none;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .online-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--secondary);
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn, .info-btn, .sound-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .notification-btn:hover, .info-btn:hover, .sound-toggle:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Stat Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: var(--transition);
+            animation: fadeInUp 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--neon-glow);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+            color: var(--secondary);
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(124, 58, 237, 0.2);
+        }
+
+        .data-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--light);
+        }
+
+        .data-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Image Preview */
+        .image-preview-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--light);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--light);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--gray);
+            gap: 10px;
+        }
+
+        .file-upload label:hover {
+            background: rgba(124, 58, 237, 0.1);
+            border-color: var(--primary);
+            color: var(--light);
+        }
+
+        /* Users Sidebar - Geliştirilmiş Tasarım */
+        .users-sidebar {
+            width: 320px;
+            background: var(--glass);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .users-sidebar.hidden {
+            transform: translateX(100%);
+            width: 0;
+            padding: 0;
+            border-left: none;
+        }
+
+        .users-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .users-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-item:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: rgba(124, 58, 237, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .user-item.active {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: var(--primary);
+        }
+
+        .user-item-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+        }
+
+        .message-notification {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            width: 10px;
+            height: 10px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid var(--dark-light);
+            animation: pulse 1.5s infinite;
+            display: none;
+        }
+
+        .message-notification.active {
+            display: block;
+        }
+
+        .user-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-item-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-item-info p {
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-item-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .user-item-status.online {
+            background: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .user-item-status.offline {
+            background: var(--gray);
+        }
+
+        /* Chat */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-header {
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-right: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-sender {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--secondary);
+        }
+
+        .chat-file {
+            margin-top: 5px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .chat-file img {
+            max-width: 200px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .chat-file a {
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-file a:hover {
+            text-decoration: underline;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--light);
+            font-size: 16px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(20px);
+            transition: var(--transition);
+            box-shadow: var(--neon-glow);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--light);
+        }
+
+        /* Invoice */
+        .invoice {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .invoice-header h1 {
+            color: var(--primary);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .invoice-table th {
+            background: #f1f5f9;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #cbd5e1;
+            color: #333;
+        }
+
+        .invoice-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #333;
+        }
+
+        .invoice-total {
+            text-align: right;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Announcement Banner */
+        .announcement-banner {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideInDown 0.5s ease;
+            box-shadow: var(--neon-glow);
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .announcement-content {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .announcement-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .announcement-content p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Settings Page */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .settings-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .settings-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .danger-zone {
+            border-left: 5px solid var(--danger);
+        }
+
+        .danger-zone h3 {
+            color: var(--danger);
+        }
+
+        .warning-zone {
+            border-left: 5px solid var(--warning);
+        }
+
+        .warning-zone h3 {
+            color: var(--warning);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar-menu span, .user-details, .sidebar-header h2 span, .sidebar-header img {
+                display: none;
+            }
+            .sidebar-header h2 {
+                justify-content: center;
+            }
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 14px;
+            }
+            .sidebar-menu i {
+                font-size: 24px;
+            }
+            .chat-notification-dot {
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .users-sidebar {
+                position: fixed;
+                right: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 999;
+                background: var(--dark-light);
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .top-bar-actions {
+                align-self: flex-end;
+            }
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .users-sidebar {
+                width: 280px;
+            }
+        }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { 
+                transform: scale(1); 
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.1); 
+                opacity: 0.7;
+            }
+            100% { 
+                transform: scale(1); 
+                opacity: 1;
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 5px solid var(--primary);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .toast-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toast-content p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Yeni: Chat mesajı bildirim animasyonu */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <img id="welcomeLogo" src="" alt="Logo" class="welcome-logo">
+        <div class="welcome-text">Giriş Yapılıyor...</div>
+        <div class="welcome-subtext">Uğur Ranza Yönetim Paneline Hoş Geldiniz<br>@developercankayaa tarafından geliştirilmiştir</div>
+        <div class="developer-info">Premium Satış Paneli v2.0 | Firebase Tabanlı</div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="logo-container">
+                <img id="loginLogo" src="" alt="Logo">
+                <h1>SATIŞ PANELİ</h1>
+                <p style="color: var(--gray); margin-top: 5px;">Sistem Girişi</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="password" placeholder="Şifre" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginButton">
+                    <span>Giriş Yap</span>
+                    <i class="fas fa-sign-in-alt"></i>
+                </button>
+                <div class="login-progress" id="loginProgress">
+                    <div class="login-progress-bar"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard-container hidden">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img id="sidebarLogo" src="" alt="Logo">
+                <h2><i class="fas fa-chart-line"></i></h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" data-page="products"><i class="fas fa-box"></i> <span>Ürünler</span></a></li>
+                <li><a href="#" data-page="customers"><i class="fas fa-users"></i> <span>Müşteriler</span></a></li>
+                <li><a href="#" data-page="sales"><i class="fas fa-shopping-cart"></i> <span>Satışlar</span></a></li>
+                <li><a href="#" data-page="adminUsers" class="admin-only hidden"><i class="fas fa-user-cog"></i> <span>Kullanıcılar</span></a></li>
+                <li><a href="#" data-page="profile"><i class="fas fa-user-circle"></i> <span>Profilim</span></a></li>
+                <li><a href="#" data-page="chat" id="chatMenuLink"><i class="fas fa-comments"></i> <span>Sohbet</span> <span class="chat-notification-dot" id="chatNotificationDot"></span></a></li>
+                <li><a href="#" data-page="reports"><i class="fas fa-file-invoice"></i> <span>Raporlar</span></a></li>
+                <li><a href="#" data-page="settings" class="admin-only hidden"><i class="fas fa-cog"></i> <span>Ayarlar</span></a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=Kullanıcı&background=7c3aed&color=fff" class="user-avatar">
+                    <div class="user-details">
+                        <h4 id="userDisplayName">Kullanıcı</h4>
+                        <p id="userRole">Yükleniyor...</p>
+                    </div>
+                    <div class="online-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Announcement Banner -->
+            <div id="announcementBanner" class="announcement-banner hidden">
+                <div class="announcement-content">
+                    <h4 id="announcementTitle">Duyuru Başlığı</h4>
+                    <p id="announcementText">Duyuru metni burada görünecek.</p>
+                </div>
+                <button class="btn btn-danger btn-sm" id="closeAnnouncementBtn">
+                    <i class="fas fa-times"></i> Kapat
+                </button>
+            </div>
+
+            <div class="top-bar">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="top-bar-actions">
+                    <div class="sound-toggle" id="soundToggle" title="Ses Aç/Kapa">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <div class="notification-btn" id="notificationBtn" title="Bildirimler">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge hidden">0</span>
+                    </div>
+                    <div class="info-btn" id="infoBtn" title="Sistem Bilgisi">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboardPage" class="page-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalRevenue">0 TL</h3>
+                            <p>Toplam Ciro</p>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>%12 Bu Ay</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalSales">0</h3>
+                            <p>Toplam Satış</p>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>%8 Bu Ay</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalProducts">0</h3>
+                            <p>Toplam Ürün</p>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>%5 Bu Ay</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalCustomers">0</h3>
+                            <p>Toplam Müşteri</p>
+                            <div class="stat-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>%15 Bu Ay</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Son Satışlar</h3>
+                        <button class="btn btn-primary" onclick="loadPage('sales')">
+                            <i class="fas fa-plus"></i> Yeni Satış
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="recentSalesTable">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Müşteri</th>
+                                    <th>Adet</th>
+                                    <th>Tutar</th>
+                                    <th>Tarih</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sales will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Page -->
+            <div id="productsPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Ürünler</h3>
+                        <button class="btn btn-primary" id="addProductBtn">
+                            <i class="fas fa-plus"></i> Yeni Ürün
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Görsel</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Fiyat</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customers Page -->
+            <div id="customersPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Müşteriler</h3>
+                        <button class="btn btn-primary" id="addCustomerBtn">
+                            <i class="fas fa-plus"></i> Yeni Müşteri
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="customersTable">
+                            <thead>
+                                <tr>
+                                    <th>Müşteri Adı</th>
+                                    <th>Telefon</th>
+                                    <th>Email</th>
+                                    <th>Not</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Customers will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Page -->
+            <div id="salesPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Yeni Satış</h3>
+                    </div>
+                    <form id="newSaleForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ürün Seçin</label>
+                                <select class="form-control" id="saleProduct" required>
+                                    <option value="">Ürün seçin...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Müşteri Seçin</label>
+                                <select class="form-control" id="saleCustomer" required>
+                                    <option value="">Müşteri seçin...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Adet</label>
+                                <input type="number" class="form-control" id="saleQuantity" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Satış Yap
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Satış Geçmişi</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="salesHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Müşteri</th>
+                                    <th>Adet</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Toplam</th>
+                                    <th>Tarih</th>
+                                    <th>Satıcı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sales history will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Users Page -->
+            <div id="adminUsersPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Kullanıcı Yönetimi</h3>
+                        <button class="btn btn-primary" id="addUserBtn">
+                            <i class="fas fa-plus"></i> Yeni Kullanıcı
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı Adı</th>
+                                    <th>Ad Soyad</th>
+                                    <th>Email</th>
+                                    <th>Yetki</th>
+                                    <th>Oluşturulma Tarihi</th>
+                                    <th>Son Giriş</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Users will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profilePage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Profilim</h3>
+                    </div>
+                    <form id="profileForm">
+                        <div class="form-group" style="text-align: center;">
+                            <img id="profileImagePreview" src="https://ui-avatars.com/api/?name=Kullanıcı&background=7c3aed&color=fff&size=150" class="user-avatar" style="width: 150px; height: 150px; margin-bottom: 20px;">
+                            <div class="file-upload">
+                                <input type="file" id="profileImage" accept="image/*">
+                                <label for="profileImage">
+                                    <i class="fas fa-camera"></i> Profil Fotoğrafı Yükle
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Görünen Ad</label>
+                                <input type="text" class="form-control" id="profileName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Kullanıcı Adı</label>
+                                <input type="text" class="form-control" id="profileUsername" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Biyografi</label>
+                            <textarea class="form-control" id="profileBio" rows="4" placeholder="Kendinizden bahsedin..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Profili Güncelle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Chat Page -->
+            <div id="chatPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h3>Genel Sohbet</h3>
+                            <p>Tüm kullanıcılarla mesajlaşabilirsiniz</p>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Messages will be populated here -->
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Mesajınızı yazın...">
+                            <input type="file" id="chatFileInput" style="display: none;" accept="image/*,.pdf,.doc,.docx,.zip">
+                            <button class="btn btn-secondary" id="attachFileBtn">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="btn btn-primary" id="sendMessageBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reportsPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Raporlar ve Faturalar</h3>
+                    </div>
+                    
+                    <!-- Report Filters -->
+                    <div class="content-card">
+                        <h4 style="margin-bottom: 20px;">Filtreleme Seçenekleri</h4>
+                        <form id="reportFilterForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Müşteri Seçin</label>
+                                    <select class="form-control" id="reportCustomer">
+                                        <option value="">Tüm Müşteriler</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ürün Seçin</label>
+                                    <select class="form-control" id="reportProduct">
+                                        <option value="">Tüm Ürünler</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tarih Aralığı</label>
+                                    <input type="date" class="form-control" id="reportDateFrom">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tarih Aralığı</label>
+                                    <input type="date" class="form-control" id="reportDateTo">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Rapor Oluştur
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="clearReportFilters">
+                                    <i class="fas fa-times"></i> Filtreleri Temizle
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Invoice Preview -->
+                    <div id="invoicePreview" class="invoice hidden">
+                        <div class="invoice-header">
+                            <h1>SATIŞ FATURASI</h1>
+                            <p>Fatura No: <span id="invoiceNumber">001</span></p>
+                            <p>Tarih: <span id="invoiceDate"></span></p>
+                        </div>
+                        <div class="invoice-details">
+                            <div>
+                                <h4>SATICI BİLGİLERİ</h4>
+                                <p id="sellerInfo">Satış Paneli<br>İstanbul, Türkiye</p>
+                            </div>
+                            <div>
+                                <h4>MÜŞTERİ BİLGİLERİ</h4>
+                                <p id="customerInfo">Seçili Müşteri</p>
+                            </div>
+                        </div>
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Adet</th>
+                                    <th>Toplam</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceItems">
+                                <!-- Invoice items will be populated here -->
+                            </tbody>
+                        </table>
+                        <div class="invoice-total">
+                            <p>TOPLAM: <span id="invoiceTotal">0 TL</span></p>
+                        </div>
+                        <div style="margin-top: 30px; text-align: center;">
+                            <button class="btn btn-primary" onclick="window.print()">
+                                <i class="fas fa-print"></i> Yazdır
+                            </button>
+                            <button class="btn btn-secondary" id="downloadPDFBtn">
+                                <i class="fas fa-file-pdf"></i> PDF İndir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Report Results Table -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>Rapor Sonuçları</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="reportsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Fatura No</th>
+                                        <th>Müşteri</th>
+                                        <th>Ürün</th>
+                                        <th>Adet</th>
+                                        <th>Birim Fiyat</th>
+                                        <th>Toplam</th>
+                                        <th>Tarih</th>
+                                        <th>Satıcı</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Report results will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="reportSummary" class="content-card" style="margin-top: 20px; display: none;">
+                            <h4>Rapor Özeti</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <p><strong>Toplam Satış:</strong> <span id="summaryTotalSales">0</span></p>
+                                </div>
+                                <div class="form-group">
+                                    <p><strong>Toplam Tutar:</strong> <span id="summaryTotalAmount">0 TL</span></p>
+                                </div>
+                                <div class="form-group">
+                                    <p><strong>Ortalama Satış:</strong> <span id="summaryAverageSale">0 TL</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page-content hidden">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>Sistem Ayarları</h3>
+                        <p>Sadece yönetici erişebilir</p>
+                    </div>
+                    
+                    <!-- Logo Management -->
+                    <div class="settings-card">
+                        <h3><i class="fas fa-image"></i> Logo Yönetimi</h3>
+                        <div class="form-group">
+                            <label>Mevcut Logo</label>
+                            <div style="text-align: center; margin: 20px 0;">
+                                <img id="currentLogoPreview" src="" style="max-width: 200px; max-height: 80px; object-fit: contain;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Yeni Logo Yükle</label>
+                            <div class="file-upload">
+                                <input type="file" id="logoUpload" accept="image/*">
+                                <label for="logoUpload">
+                                    <i class="fas fa-upload"></i> Logo Dosyası Seçin
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="saveLogoBtn">
+                            <i class="fas fa-save"></i> Logoyu Kaydet
+                        </button>
+                    </div>
+
+                    <!-- Announcement Management -->
+                    <div class="settings-card">
+                        <h3><i class="fas fa-bullhorn"></i> Duyuru Yönetimi</h3>
+                        <div class="form-group">
+                            <label>Duyuru Başlığı</label>
+                            <input type="text" class="form-control" id="announcementTitleInput" placeholder="Duyuru başlığı">
+                        </div>
+                        <div class="form-group">
+                            <label>Duyuru Metni</label>
+                            <textarea class="form-control" id="announcementTextInput" rows="3" placeholder="Duyuru metni"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <button class="btn btn-primary" id="addAnnouncementBtn">
+                                <i class="fas fa-plus"></i> Duyuru Ekle
+                            </button>
+                            <button class="btn btn-danger" id="deleteAnnouncementBtn">
+                                <i class="fas fa-trash"></i> Duyuruyu Sil
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="settings-card danger-zone">
+                        <h3><i class="fas fa-database"></i> Veri Yönetimi</h3>
+                        <div class="form-group">
+                            <label>Verileri İndir</label>
+                            <p style="margin-bottom: 10px; font-size: 14px; color: var(--gray);">
+                                Tüm verileri JSON formatında indirin
+                            </p>
+                            <button class="btn btn-secondary" id="downloadDataBtn">
+                                <i class="fas fa-download"></i> Verileri İndir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-card warning-zone">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Tehlike Bölgesi</h3>
+                        <div class="form-group">
+                            <label>Sadece Verileri Temizle</label>
+                            <p style="margin-bottom: 10px; font-size: 14px; color: var(--gray);">
+                                Satışlar, mesajlar ve raporları siler. Ürünler ve müşteriler kalır.
+                            </p>
+                            <button class="btn btn-warning" id="clearDataBtn">
+                                <i class="fas fa-broom"></i> Sadece Verileri Temizle
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label>Tüm Verileri Temizle</label>
+                            <p style="margin-bottom: 10px; font-size: 14px; color: var(--gray);">
+                                TÜM verileri kalıcı olarak siler. Bu işlem geri alınamaz!
+                            </p>
+                            <button class="btn btn-danger" id="clearAllDataBtn">
+                                <i class="fas fa-trash"></i> Tüm Verileri Temizle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Sidebar - Tüm kullanıcılar için görünür -->
+        <div class="users-sidebar" id="usersSidebar">
+            <div class="users-header">
+                <h3>Çevrimiçi Kullanıcılar</h3>
+                <button class="close-modal" id="closeUsersSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="users-list" id="usersList">
+                <!-- Users will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="addProductModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Yeni Ürün Ekle</h3>
+                <button class="close-modal" data-modal="addProductModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label>Ürün Adı</label>
+                    <input type="text" class="form-control" id="productName" required>
+                </div>
+                <div class="form-group">
+                    <label>Fiyat (TL)</label>
+                    <input type="number" class="form-control" id="productPrice" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Resim URL'si</label>
+                    <input type="text" class="form-control" id="productImageUrl" placeholder="https://example.com/resim.jpg">
+                    <small class="form-text" style="color: var(--gray);">URL girin veya dosya yükleyin</small>
+                </div>
+                <div class="form-group">
+                    <label>Veya Resim Dosyası Yükle</label>
+                    <div class="file-upload">
+                        <input type="file" id="productImageFile" accept="image/*">
+                        <label for="productImageFile">
+                            <i class="fas fa-upload"></i> Görsel Seçin
+                        </label>
+                    </div>
+                </div>
+                <!-- Image Preview -->
+                <div class="image-preview-container hidden" id="productImagePreviewContainer">
+                    <h4>Resim Önizleme</h4>
+                    <img id="productImagePreview" class="image-preview" src="" alt="Resim Önizleme">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Ürünü Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addCustomerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Yeni Müşteri Ekle</h3>
+                <button class="close-modal" data-modal="addCustomerModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addCustomerForm">
+                <div class="form-group">
+                    <label>Müşteri Adı</label>
+                    <input type="text" class="form-control" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Telefon</label>
+                    <input type="tel" class="form-control" id="customerPhone">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="customerEmail">
+                </div>
+                <div class="form-group">
+                    <label>Not</label>
+                    <textarea class="form-control" id="customerNote" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Müşteriyi Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Yeni Kullanıcı Ekle</h3>
+                <button class="close-modal" data-modal="addUserModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="newEmail" required placeholder="kullanici@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" class="form-control" id="newFullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" class="form-control" id="newPassword" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Yetki</label>
+                    <select class="form-control" id="newRole" required>
+                        <option value="satıcı">Satıcı</option>
+                        <option value="yönetici">Yönetici</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="createUserBtn">
+                        <i class="fas fa-user-plus"></i> Kullanıcı Oluştur
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Sistem Bilgisi</h3>
+                <button class="close-modal" data-modal="infoModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div style="line-height: 1.6;">
+                <p><strong>Bu panel Can Kaya tarafından tasarlanmıştır.</strong></p>
+                <p>Premium satış yönetim sistemi, gerçek zamanlı veri takibi ve kullanıcı yönetimi için geliştirilmiştir.</p>
+                <p>Sistem özellikleri:</p>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>Gerçek zamanlı satış takibi</li>
+                    <li>Ürün ve müşteri yönetimi</li>
+                    <li>Kullanıcı bazlı veri erişimi</li>
+                    <li>Gerçek zamanlı sohbet</li>
+                    <li>Fatura ve rapor oluşturma</li>
+                    <li>Sesli bildirimler</li>
+                    <li>Logo yönetimi</li>
+                    <li>Duyuru sistemi</li>
+                    <li>Dosya paylaşımı</li>
+                </ul>
+                <p>Firebase Firestore ve Storage kullanılarak geliştirilmiştir.</p>
+                <p style="margin-top: 20px; font-style: italic;">
+                    @developercankayaa - Uğur Ranza Yönetim Paneli v2.0
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- YENİ: Birebir Sohbet Modalı -->
+    <div class="modal-overlay" id="privateChatModal">
+        <div class="modal" style="max-width: 600px; height: 80vh;">
+            <div class="modal-header">
+                <h3 id="privateChatTitle">Birebir Sohbet</h3>
+                <button class="close-modal" data-modal="privateChatModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-container" style="height: calc(100% - 120px);">
+                <div class="chat-messages" id="privateChatMessages" style="flex: 1; overflow-y: auto;">
+                    <!-- Private messages will be populated here -->
+                </div>
+                <div class="chat-input-container" style="margin-top: 10px;">
+                    <input type="text" class="chat-input" id="privateChatInput" placeholder="Mesajınızı yazın...">
+                    <input type="file" id="privateChatFileInput" style="display: none;" accept="image/*,.pdf,.doc,.docx,.zip">
+                    <button class="btn btn-secondary" id="attachPrivateFileBtn">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="btn btn-primary" id="sendPrivateMessageBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="toast-content">
+            <h4 id="toastTitle">Bildirim</h4>
+            <p id="toastMessage">Mesaj içeriği</p>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="notificationSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="saleSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-cash-register-purchase-875.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="messageSound" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtH-e8rRLzwZCc7SxAmYNZOUkywrQWqEE",
+            authDomain: "ugurranzapanel.firebaseapp.com",
+            databaseURL: "https://ugurranzapanel-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "ugurranzapanel",
+            storageBucket: "ugurranzapanel.firebasestorage.app",
+            messagingSenderId: "310330553380",
+            appId: "1:310330553380:web:8dfad084e8acbd612f14b1",
+            measurementId: "G-0R22540Q30"
+        };
+
+        // Initialize Firebase (Auth kaldırıldı)
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Application State
+        let currentUser = null;
+        let isAdmin = false;
+        let soundEnabled = true;
+        let users = {};
+        let products = [];
+        let customers = [];
+        let sales = [];
+        let messages = [];
+        let currentAnnouncement = null;
+        let currentLogo = null;
+        let selectedUserForChat = null;
+        let privateChatListener = null;
+        let unreadPrivateMessages = new Set();
+        let unreadGeneralMessages = false;
+        let messageListeners = [];
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginProgress = document.getElementById('loginProgress');
+        const loginProgressBar = loginProgress.querySelector('.login-progress-bar');
+        const loginButton = document.getElementById('loginButton');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const pageTitle = document.getElementById('pageTitle');
+        const userAvatar = document.getElementById('userAvatar');
+        const userDisplayName = document.getElementById('userDisplayName');
+        const userRole = document.getElementById('userRole');
+        const soundToggle = document.getElementById('soundToggle');
+        const infoBtn = document.getElementById('infoBtn');
+        const usersSidebar = document.getElementById('usersSidebar');
+        const closeUsersSidebar = document.getElementById('closeUsersSidebar');
+        const notificationSound = document.getElementById('notificationSound');
+        const saleSound = document.getElementById('saleSound');
+        const messageSound = document.getElementById('messageSound');
+        const toast = document.getElementById('toast');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+        const loginLogo = document.getElementById('loginLogo');
+        const sidebarLogo = document.getElementById('sidebarLogo');
+        const welcomeLogo = document.getElementById('welcomeLogo');
+        const chatNotificationDot = document.getElementById('chatNotificationDot');
+
+        // Announcement Elements
+        const announcementBanner = document.getElementById('announcementBanner');
+        const announcementTitle = document.getElementById('announcementTitle');
+        const announcementText = document.getElementById('announcementText');
+        const closeAnnouncementBtn = document.getElementById('closeAnnouncementBtn');
+
+        // Chat Elements
+        const chatFileInput = document.getElementById('chatFileInput');
+        const attachFileBtn = document.getElementById('attachFileBtn');
+        const chatMenuLink = document.getElementById('chatMenuLink');
+
+        // Settings Elements
+        const saveLogoBtn = document.getElementById('saveLogoBtn');
+        const logoUpload = document.getElementById('logoUpload');
+        const currentLogoPreview = document.getElementById('currentLogoPreview');
+        const addAnnouncementBtn = document.getElementById('addAnnouncementBtn');
+        const deleteAnnouncementBtn = document.getElementById('deleteAnnouncementBtn');
+        const announcementTitleInput = document.getElementById('announcementTitleInput');
+        const announcementTextInput = document.getElementById('announcementTextInput');
+        const downloadDataBtn = document.getElementById('downloadDataBtn');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const clearAllDataBtn = document.getElementById('clearAllDataBtn');
+
+        // Product Elements
+        const productImageUrl = document.getElementById('productImageUrl');
+        const productImageFile = document.getElementById('productImageFile');
+        const productImagePreview = document.getElementById('productImagePreview');
+        const productImagePreviewContainer = document.getElementById('productImagePreviewContainer');
+
+        // Report Elements
+        const reportCustomer = document.getElementById('reportCustomer');
+        const reportProduct = document.getElementById('reportProduct');
+        const reportDateFrom = document.getElementById('reportDateFrom');
+        const reportDateTo = document.getElementById('reportDateTo');
+        const reportFilterForm = document.getElementById('reportFilterForm');
+        const clearReportFilters = document.getElementById('clearReportFilters');
+
+        // Page Elements
+        const totalRevenue = document.getElementById('totalRevenue');
+        const totalSales = document.getElementById('totalSales');
+        const totalProducts = document.getElementById('totalProducts');
+        const totalCustomers = document.getElementById('totalCustomers');
+        const recentSalesTable = document.getElementById('recentSalesTable').querySelector('tbody');
+        const productsTable = document.getElementById('productsTable').querySelector('tbody');
+        const customersTable = document.getElementById('customersTable').querySelector('tbody');
+        const salesHistoryTable = document.getElementById('salesHistoryTable').querySelector('tbody');
+        const usersTable = document.getElementById('usersTable').querySelector('tbody');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const usersList = document.getElementById('usersList');
+        const reportsTable = document.getElementById('reportsTable').querySelector('tbody');
+
+        // Private Chat Elements
+        const privateChatModal = document.getElementById('privateChatModal');
+        const privateChatMessages = document.getElementById('privateChatMessages');
+        const privateChatInput = document.getElementById('privateChatInput');
+        const privateChatFileInput = document.getElementById('privateChatFileInput');
+        const attachPrivateFileBtn = document.getElementById('attachPrivateFileBtn');
+        const sendPrivateMessageBtn = document.getElementById('sendPrivateMessageBtn');
+        const privateChatTitle = document.getElementById('privateChatTitle');
+
+        // Initialize on DOM Load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set current date for forms
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.value = today;
+            });
+            
+            // Load logo immediately
+            await loadLogo();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check if user is already logged in (from localStorage)
+            checkExistingSession();
+        });
+
+        // Check existing session from localStorage
+        function checkExistingSession() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    isAdmin = currentUser.role === 'yönetici';
+                    
+                    // Auto login
+                    loginScreen.classList.add('hidden');
+                    dashboard.classList.remove('hidden');
+                    updateUserUI();
+                    initializeApp();
+                    showToast('Oturum Yenilendi', `Hoş geldiniz ${currentUser.displayName}!`);
+                } catch (error) {
+                    console.error('Oturum yüklenirken hata:', error);
+                    localStorage.removeItem('currentUser');
+                }
+            }
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Login Form
+            loginForm.addEventListener('submit', handleLogin);
+
+            // Logout
+            logoutBtn.addEventListener('click', handleLogout);
+
+            // Sound Toggle
+            soundToggle.addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                const icon = soundToggle.querySelector('i');
+                icon.className = soundEnabled ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+                showToast('Bildirim', soundEnabled ? 'Ses açıldı' : 'Ses kapatıldı');
+            });
+
+            // Info Modal
+            infoBtn.addEventListener('click', () => {
+                document.getElementById('infoModal').classList.add('active');
+            });
+
+            // Close Modals
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const modalId = this.dataset.modal || this.closest('.modal-overlay').id;
+                    document.getElementById(modalId).classList.remove('active');
+                    
+                    // Clean up private chat listener
+                    if (modalId === 'privateChatModal' && privateChatListener) {
+                        privateChatListener();
+                        privateChatListener = null;
+                        selectedUserForChat = null;
+                    }
+                });
+            });
+
+            // Close users sidebar
+            closeUsersSidebar.addEventListener('click', () => {
+                usersSidebar.classList.add('hidden');
+            });
+
+            // Navigation
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    
+                    // Chat sayfasına tıklandığında bildirimi temizle
+                    if (page === 'chat') {
+                        clearGeneralChatNotification();
+                    }
+                    
+                    loadPage(page);
+                    
+                    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Chat menu link click
+            chatMenuLink.addEventListener('click', function(e) {
+                clearGeneralChatNotification();
+            });
+
+            // Add Product Button
+            document.getElementById('addProductBtn').addEventListener('click', () => {
+                document.getElementById('addProductModal').classList.add('active');
+            });
+
+            // Product Image URL Preview
+            productImageUrl.addEventListener('input', function() {
+                const url = this.value.trim();
+                if (url) {
+                    productImagePreview.src = url;
+                    productImagePreviewContainer.classList.remove('hidden');
+                } else {
+                    productImagePreviewContainer.classList.add('hidden');
+                }
+            });
+
+            // Product Image File Preview
+            productImageFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        productImagePreview.src = event.target.result;
+                        productImagePreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Add Product Form
+            document.getElementById('addProductForm').addEventListener('submit', handleAddProduct);
+
+            // Add Customer Button
+            document.getElementById('addCustomerBtn').addEventListener('click', () => {
+                document.getElementById('addCustomerModal').classList.add('active');
+            });
+
+            // Add Customer Form
+            document.getElementById('addCustomerForm').addEventListener('submit', handleAddCustomer);
+
+            // Add User Button
+            document.getElementById('addUserBtn').addEventListener('click', () => {
+                document.getElementById('addUserModal').classList.add('active');
+            });
+
+            // Add User Form
+            document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+
+            // Report Filters
+            reportFilterForm.addEventListener('submit', handleGenerateReport);
+            clearReportFilters.addEventListener('click', clearReportFiltersHandler);
+
+            // Settings Buttons
+            saveLogoBtn.addEventListener('click', handleSaveLogo);
+            addAnnouncementBtn.addEventListener('click', handleAddAnnouncement);
+            deleteAnnouncementBtn.addEventListener('click', handleDeleteAnnouncement);
+            downloadDataBtn.addEventListener('click', handleDownloadData);
+            clearDataBtn.addEventListener('click', handleClearData);
+            clearAllDataBtn.addEventListener('click', handleClearAllData);
+
+            // Chat
+            sendMessageBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Attach File
+            attachFileBtn.addEventListener('click', () => {
+                chatFileInput.click();
+            });
+
+            chatFileInput.addEventListener('change', handleFileUpload);
+
+            // Private Chat
+            sendPrivateMessageBtn.addEventListener('click', sendPrivateMessage);
+            privateChatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendPrivateMessage();
+                }
+            });
+
+            attachPrivateFileBtn.addEventListener('click', () => {
+                privateChatFileInput.click();
+            });
+
+            privateChatFileInput.addEventListener('change', handlePrivateFileUpload);
+        }
+
+        // Giriş Fonksiyonu - Firebase Auth YOK, doğrudan Firestore
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            loginButton.disabled = true;
+            loginButton.innerHTML = '<div class="loading"></div>';
+            loginProgress.style.display = 'block';
+            
+            // Simulate progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                loginProgressBar.style.width = `${progress}%`;
+                if (progress >= 90) clearInterval(progressInterval);
+            }, 150);
+            
+            try {
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                
+                if (!email || !password) {
+                    throw new Error('Lütfen email ve şifre girin!');
+                }
+                
+                // Firestore'da kullanıcıyı sorgula
+                const usersRef = db.collection('users');
+                const querySnapshot = await usersRef
+                    .where('email', '==', email)
+                    .where('password', '==', password)
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    throw new Error('Kullanıcı veya şifre hatalı!');
+                }
+                
+                // Kullanıcı bulundu
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                currentUser = {
+                    id: userDoc.id,
+                    uid: userDoc.id,
+                    email: userData.email,
+                    displayName: userData.displayName || userData.fullName || userData.email,
+                    role: userData.role,
+                    photoURL: userData.photoURL || '',
+                    isAdmin: userData.role === 'yönetici'
+                };
+                
+                isAdmin = currentUser.isAdmin;
+                
+                // Update last login
+                await db.collection('users').doc(userDoc.id).update({
+                    lastLogin: new Date().toISOString(),
+                    online: true
+                });
+                
+                // Save user to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Complete progress bar
+                loginProgressBar.style.width = '100%';
+                
+                // Show welcome screen
+                setTimeout(() => {
+                    loginScreen.classList.add('hidden');
+                    welcomeScreen.classList.add('active');
+                    
+                    // Hide welcome screen and show dashboard
+                    setTimeout(() => {
+                        welcomeScreen.classList.remove('active');
+                        dashboard.classList.remove('hidden');
+                        
+                        // Update UI
+                        updateUserUI();
+                        
+                        // Initialize app
+                        initializeApp();
+                        
+                        showToast('Hoş Geldiniz', `Uğur Ranza Yönetim Paneline Hoş Geldiniz!`);
+                        playSound(notificationSound);
+                    }, 1500);
+                    
+                }, 500);
+                
+            } catch (error) {
+                clearInterval(progressInterval);
+                loginProgressBar.style.width = '100%';
+                loginProgressBar.style.background = 'var(--danger)';
+                
+                setTimeout(() => {
+                    showToast('Hata', error.message);
+                    resetLoginForm();
+                }, 500);
+                
+                console.error('Login error:', error);
+            }
+        }
+
+        function updateUserUI() {
+            userDisplayName.textContent = currentUser.displayName || currentUser.email;
+            userRole.textContent = currentUser.role === 'yönetici' ? 'Yönetici' : 'Satıcı';
+            userAvatar.src = currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || currentUser.email}&background=7c3aed&color=fff`;
+            
+            // Show/hide admin-only menu items
+            if (isAdmin) {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+            } else {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+            }
+            
+            // Users sidebar her zaman göster
+            usersSidebar.classList.remove('hidden');
+        }
+
+        function resetLoginForm() {
+            loginButton.disabled = false;
+            loginButton.innerHTML = '<span>Giriş Yap</span><i class="fas fa-sign-in-alt"></i>';
+            loginProgress.style.display = 'none';
+            loginProgressBar.style.width = '0%';
+            loginProgressBar.style.background = 'linear-gradient(to right, var(--secondary), var(--primary))';
+            emailInput.value = '';
+            passwordInput.value = '';
+        }
+
+        async function handleLogout() {
+            if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+                // Update online status
+                if (currentUser && currentUser.id) {
+                    try {
+                        await db.collection('users').doc(currentUser.id).update({
+                            online: false,
+                            lastSeen: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error('Online status update error:', error);
+                    }
+                }
+                
+                // Clean up listeners
+                cleanupListeners();
+                
+                // Clear localStorage
+                localStorage.removeItem('currentUser');
+                
+                // Reset state
+                currentUser = null;
+                isAdmin = false;
+                unreadPrivateMessages.clear();
+                unreadGeneralMessages = false;
+                
+                // Hide dashboard and show login
+                dashboard.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+                resetLoginForm();
+                
+                showToast('Başarılı', 'Başarıyla çıkış yapıldı.');
+            }
+        }
+
+        function cleanupListeners() {
+            // Clean up all listeners
+            messageListeners.forEach(unsubscribe => unsubscribe());
+            messageListeners = [];
+            
+            if (privateChatListener) {
+                privateChatListener();
+                privateChatListener = null;
+            }
+        }
+
+        // Initialize Application
+        async function initializeApp() {
+            try {
+                // Load all data
+                await Promise.all([
+                    loadDashboardData(),
+                    loadProducts(),
+                    loadCustomers(),
+                    loadSales(),
+                    loadUsers(),
+                    loadMessages(),
+                    loadAnnouncement(),
+                    loadReportFilters()
+                ]);
+                
+                setupRealTimeListeners();
+                
+            } catch (error) {
+                console.error('App initialization error:', error);
+                showToast('Hata', 'Uygulama başlatılırken bir hata oluştu!');
+            }
+        }
+
+        // Load Logo
+        async function loadLogo() {
+            try {
+                const logoDoc = await db.collection('settings').doc('logo').get();
+                if (logoDoc.exists && logoDoc.data().base64) {
+                    currentLogo = logoDoc.data().base64;
+                    
+                    // Update all logos immediately
+                    if (loginLogo) loginLogo.src = currentLogo;
+                    if (sidebarLogo) sidebarLogo.src = currentLogo;
+                    if (welcomeLogo) welcomeLogo.src = currentLogo;
+                    if (currentLogoPreview) currentLogoPreview.src = currentLogo;
+                } else {
+                    // Default placeholder
+                    const placeholder = 'https://via.placeholder.com/200x80/7c3aed/ffffff?text=Uğur+Ranza';
+                    if (loginLogo) loginLogo.src = placeholder;
+                    if (sidebarLogo) sidebarLogo.src = placeholder;
+                    if (welcomeLogo) welcomeLogo.src = placeholder;
+                    if (currentLogoPreview) currentLogoPreview.src = placeholder;
+                }
+            } catch (error) {
+                console.error('Logo yüklenirken hata:', error);
+            }
+        }
+
+        async function handleSaveLogo() {
+            const file = logoUpload.files[0];
+            if (!file) {
+                showToast('Hata', 'Lütfen bir logo dosyası seçin!');
+                return;
+            }
+            
+            try {
+                saveLogoBtn.disabled = true;
+                saveLogoBtn.innerHTML = '<div class="loading"></div>';
+                
+                // Convert to Base64
+                const base64 = await fileToBase64(file);
+                
+                // Save to Firestore
+                await db.collection('settings').doc('logo').set({
+                    base64: base64,
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: currentUser.id
+                });
+                
+                // Update logos immediately
+                currentLogo = base64;
+                loginLogo.src = base64;
+                sidebarLogo.src = base64;
+                welcomeLogo.src = base64;
+                currentLogoPreview.src = base64;
+                
+                showToast('Başarılı', 'Logo başarıyla güncellendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Logo kaydedilirken hata:', error);
+                showToast('Hata', 'Logo kaydedilirken bir hata oluştu!');
+            } finally {
+                saveLogoBtn.disabled = false;
+                saveLogoBtn.innerHTML = '<i class="fas fa-save"></i> Logoyu Kaydet';
+            }
+        }
+
+        // File to Base64 Utility Function
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Announcement System
+        async function loadAnnouncement() {
+            try {
+                const announcementDoc = await db.collection('announcements').doc('current').get();
+                if (announcementDoc.exists && announcementDoc.data().active) {
+                    currentAnnouncement = announcementDoc.data();
+                    announcementBanner.classList.remove('hidden');
+                    announcementTitle.textContent = currentAnnouncement.title;
+                    announcementText.textContent = currentAnnouncement.text;
+                } else {
+                    announcementBanner.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Duyuru yüklenirken hata:', error);
+            }
+        }
+
+        closeAnnouncementBtn.addEventListener('click', () => {
+            announcementBanner.classList.add('hidden');
+        });
+
+        async function handleAddAnnouncement() {
+            const title = announcementTitleInput.value.trim();
+            const text = announcementTextInput.value.trim();
+            
+            if (!title || !text) {
+                showToast('Hata', 'Lütfen duyuru başlığı ve metnini girin!');
+                return;
+            }
+            
+            try {
+                await db.collection('announcements').doc('current').set({
+                    title: title,
+                    text: text,
+                    active: true,
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser.id
+                });
+                
+                announcementTitleInput.value = '';
+                announcementTextInput.value = '';
+                
+                await loadAnnouncement();
+                showToast('Başarılı', 'Duyuru başarıyla eklendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Duyuru eklenirken hata:', error);
+                showToast('Hata', 'Duyuru eklenirken bir hata oluştu!');
+            }
+        }
+
+        async function handleDeleteAnnouncement() {
+            if (!confirm('Duyuruyu silmek istediğinize emin misiniz?')) return;
+            
+            try {
+                await db.collection('announcements').doc('current').update({
+                    active: false
+                });
+                
+                await loadAnnouncement();
+                showToast('Başarılı', 'Duyuru başarıyla silindi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Duyuru silinirken hata:', error);
+                showToast('Hata', 'Duyuru silinirken bir hata oluştu!');
+            }
+        }
+
+        // Data Management
+        async function handleDownloadData() {
+            try {
+                const data = {
+                    products: [],
+                    customers: [],
+                    sales: [],
+                    users: [],
+                    messages: [],
+                    announcements: [],
+                    settings: []
+                };
+                
+                // Fetch all data
+                const collections = ['products', 'customers', 'sales', 'users', 'messages', 'announcements', 'settings'];
+                
+                for (const collection of collections) {
+                    const snapshot = await db.collection(collection).get();
+                    snapshot.forEach(doc => {
+                        data[collection].push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                }
+                
+                // Create and download JSON file
+                const jsonData = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `satis-panel-verileri-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('Başarılı', 'Veriler başarıyla indirildi!');
+                
+            } catch (error) {
+                console.error('Veriler indirilirken hata:', error);
+                showToast('Hata', 'Veriler indirilirken bir hata oluştu!');
+            }
+        }
+
+        async function handleClearData() {
+            if (!confirm('Sadece satış, mesaj ve rapor verilerini silmek istediğinize emin misiniz?')) return;
+            
+            try {
+                // Delete sales
+                const salesSnapshot = await db.collection('sales').get();
+                const salesBatch = db.batch();
+                salesSnapshot.docs.forEach(doc => salesBatch.delete(doc.ref));
+                await salesBatch.commit();
+                
+                // Delete messages
+                const messagesSnapshot = await db.collection('messages').get();
+                const messagesBatch = db.batch();
+                messagesSnapshot.docs.forEach(doc => messagesBatch.delete(doc.ref));
+                await messagesBatch.commit();
+                
+                // Reload data
+                await Promise.all([
+                    loadSales(),
+                    loadDashboardData(),
+                    loadMessages()
+                ]);
+                
+                showToast('Başarılı', 'Veriler başarıyla temizlendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Veriler temizlenirken hata:', error);
+                showToast('Hata', 'Veriler temizlenirken bir hata oluştu!');
+            }
+        }
+
+        async function handleClearAllData() {
+            if (!confirm('TÜM verileri silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) return;
+            
+            try {
+                // Delete all collections except settings
+                const collections = ['products', 'customers', 'sales', 'messages', 'users', 'announcements'];
+                
+                for (const collection of collections) {
+                    const snapshot = await db.collection(collection).get();
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                }
+                
+                // Reload all data
+                await Promise.all([
+                    loadProducts(),
+                    loadCustomers(),
+                    loadSales(),
+                    loadDashboardData(),
+                    loadMessages(),
+                    loadUsers(),
+                    loadAnnouncement()
+                ]);
+                
+                showToast('Başarılı', 'Tüm veriler başarıyla temizlendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Tüm veriler temizlenirken hata:', error);
+                showToast('Hata', 'Veriler temizlenirken bir hata oluştu!');
+            }
+        }
+
+        // Handle File Upload with Firebase Storage
+        async function handleFileUpload() {
+            const file = chatFileInput.files[0];
+            if (!file) return;
+            
+            try {
+                // Upload to Firebase Storage
+                const storageRef = storage.ref();
+                const fileRef = storageRef.child(`chat/files/${Date.now()}_${file.name}`);
+                const uploadTask = await fileRef.put(file);
+                const downloadURL = await uploadTask.ref.getDownloadURL();
+                
+                // Send message with file
+                const messageData = {
+                    text: '',
+                    fileUrl: downloadURL,
+                    fileName: file.name,
+                    fileType: file.type.startsWith('image/') ? 'image' : 'file',
+                    senderId: currentUser.id,
+                    senderName: currentUser.displayName || currentUser.email,
+                    timestamp: new Date().toISOString()
+                };
+                
+                await db.collection('messages').add(messageData);
+                
+                // Clear file input
+                chatFileInput.value = '';
+                
+                playSound(messageSound);
+                
+            } catch (error) {
+                console.error('Dosya gönderilirken hata:', error);
+                showToast('Hata', 'Dosya gönderilirken bir hata oluştu!');
+            }
+        }
+
+        // Private File Upload - DÜZELTİLDİ
+        async function handlePrivateFileUpload() {
+            const file = privateChatFileInput.files[0];
+            if (!file || !selectedUserForChat) return;
+            
+            try {
+                // Upload to Firebase Storage
+                const storageRef = storage.ref();
+                const fileRef = storageRef.child(`private_chat/${currentUser.id}_${selectedUserForChat.id}/${Date.now()}_${file.name}`);
+                const uploadTask = fileRef.put(file);
+                
+                // Upload progress and completion
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        // Progress handling
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                    },
+                    (error) => {
+                        console.error('Upload error:', error);
+                        showToast('Hata', 'Dosya yüklenirken bir hata oluştu!');
+                    },
+                    async () => {
+                        // Upload completed successfully
+                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                        
+                        // Send private message with file
+                        const chatId = getChatId(currentUser.id, selectedUserForChat.id);
+                        const messageData = {
+                            text: '',
+                            fileUrl: downloadURL,
+                            fileName: file.name,
+                            fileType: file.type.startsWith('image/') ? 'image' : 'file',
+                            senderId: currentUser.id,
+                            senderName: currentUser.displayName || currentUser.email,
+                            receiverId: selectedUserForChat.id,
+                            timestamp: new Date().toISOString(),
+                            read: false
+                        };
+                        
+                        await db.collection('private_messages').doc(chatId).collection('messages').add(messageData);
+                        
+                        // Clear file input
+                        privateChatFileInput.value = '';
+                        
+                        playSound(messageSound);
+                    }
+                );
+                
+            } catch (error) {
+                console.error('Private dosya gönderilirken hata:', error);
+                showToast('Hata', 'Dosya gönderilirken bir hata oluştu!');
+            }
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            try {
+                // Calculate totals
+                let totalRevenueValue = 0;
+                let totalSalesCount = 0;
+                let totalProductsCount = 0;
+                let totalCustomersCount = 0;
+                
+                // Get sales data
+                let salesQuery = db.collection('sales');
+                if (!isAdmin) {
+                    salesQuery = salesQuery.where('sellerId', '==', currentUser.id);
+                }
+                
+                const salesSnapshot = await salesQuery.get();
+                salesSnapshot.forEach(doc => {
+                    const sale = doc.data();
+                    totalRevenueValue += sale.total || 0;
+                    totalSalesCount++;
+                });
+                
+                // Get products data
+                let productsQuery = db.collection('products');
+                if (!isAdmin) {
+                    productsQuery = productsQuery.where('createdBy', '==', currentUser.id);
+                }
+                
+                const productsSnapshot = await productsQuery.get();
+                totalProductsCount = productsSnapshot.size;
+                
+                // Get customers data
+                let customersQuery = db.collection('customers');
+                if (!isAdmin) {
+                    customersQuery = customersQuery.where('createdBy', '==', currentUser.id);
+                }
+                
+                const customersSnapshot = await customersQuery.get();
+                totalCustomersCount = customersSnapshot.size;
+                
+                // Update UI
+                totalRevenue.textContent = `${totalRevenueValue.toFixed(2)} TL`;
+                totalSales.textContent = totalSalesCount;
+                totalProducts.textContent = totalProductsCount;
+                totalCustomers.textContent = totalCustomersCount;
+                
+                // Load recent sales
+                await loadRecentSales();
+                
+            } catch (error) {
+                console.error('Dashboard verileri yüklenirken hata:', error);
+            }
+        }
+
+        // Load Recent Sales
+        async function loadRecentSales() {
+            try {
+                let query = db.collection('sales')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5);
+                
+                if (!isAdmin) {
+                    query = query.where('sellerId', '==', currentUser.id);
+                }
+                
+                const snapshot = await query.get();
+                recentSalesTable.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const sale = doc.data();
+                    const row = document.createElement('tr');
+                    
+                    const date = sale.createdAt ? new Date(sale.createdAt).toLocaleDateString('tr-TR') : 'Belirtilmemiş';
+                    
+                    row.innerHTML = `
+                        <td>${sale.productName || 'Ürün'}</td>
+                        <td>${sale.customerName || 'Müşteri'}</td>
+                        <td>${sale.quantity || 1}</td>
+                        <td>${(sale.total || 0).toFixed(2)} TL</td>
+                        <td>${date}</td>
+                    `;
+                    
+                    recentSalesTable.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Son satışlar yüklenirken hata:', error);
+            }
+        }
+
+        // Load Products
+        async function loadProducts() {
+            try {
+                let query = db.collection('products');
+                if (!isAdmin) {
+                    query = query.where('createdBy', '==', currentUser.id);
+                }
+                
+                const snapshot = await query.get();
+                products = [];
+                productsTable.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const product = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    products.push(product);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <img src="${product.imageBase64 || product.imageUrl || 'https://via.placeholder.com/50'}" 
+                                 class="product-image" 
+                                 alt="${product.name}"
+                                 onerror="this.src='https://via.placeholder.com/50'">
+                        </td>
+                        <td>${product.name}</td>
+                        <td>${product.price ? product.price.toFixed(2) + ' TL' : 'Belirtilmemiş'}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct('${doc.id}')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    `;
+                    
+                    productsTable.appendChild(row);
+                });
+                
+                // Update product selects
+                updateProductSelect();
+                updateReportProductSelect();
+                
+            } catch (error) {
+                console.error('Ürünler yüklenirken hata:', error);
+            }
+        }
+
+        // Add Product Function
+        async function handleAddProduct(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const imageUrl = document.getElementById('productImageUrl').value.trim();
+            const imageFile = document.getElementById('productImageFile').files[0];
+            
+            if (!name || isNaN(price)) {
+                showToast('Hata', 'Lütfen ürün adı ve fiyatını girin!');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                let imageBase64 = '';
+                let finalImageUrl = imageUrl;
+                
+                // If file is uploaded, convert to Base64
+                if (imageFile) {
+                    imageBase64 = await fileToBase64(imageFile);
+                }
+                
+                // Prepare product data
+                const productData = {
+                    name: name,
+                    price: price,
+                    createdBy: currentUser.id,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Add image data
+                if (imageBase64) {
+                    productData.imageBase64 = imageBase64;
+                } else if (finalImageUrl) {
+                    productData.imageUrl = finalImageUrl;
+                }
+                
+                // Save product to Firestore
+                await db.collection('products').add(productData);
+                
+                // Reset form
+                document.getElementById('addProductForm').reset();
+                productImagePreviewContainer.classList.add('hidden');
+                document.getElementById('addProductModal').classList.remove('active');
+                
+                // Reload products
+                await Promise.all([
+                    loadProducts(),
+                    loadDashboardData()
+                ]);
+                
+                showToast('Başarılı', 'Ürün başarıyla eklendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Ürün eklenirken hata:', error);
+                showToast('Hata', 'Ürün eklenirken bir hata oluştu!');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Ürünü Kaydet';
+            }
+        }
+
+        async function deleteProduct(productId) {
+            if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
+            
+            try {
+                await db.collection('products').doc(productId).delete();
+                showToast('Başarılı', 'Ürün başarıyla silindi!');
+                playSound(notificationSound);
+                await Promise.all([
+                    loadProducts(),
+                    loadDashboardData()
+                ]);
+            } catch (error) {
+                console.error('Ürün silinirken hata:', error);
+                showToast('Hata', 'Ürün silinirken bir hata oluştu!');
+            }
+        }
+
+        // Update Product Select
+        function updateProductSelect() {
+            const select = document.getElementById('saleProduct');
+            select.innerHTML = '<option value="">Ürün seçin...</option>';
+            
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} - ${product.price ? product.price.toFixed(2) + ' TL' : ''}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Load Customers
+        async function loadCustomers() {
+            try {
+                let query = db.collection('customers');
+                if (!isAdmin) {
+                    query = query.where('createdBy', '==', currentUser.id);
+                }
+                
+                const snapshot = await query.get();
+                customers = [];
+                customersTable.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const customer = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    customers.push(customer);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${customer.name || 'İsimsiz'}</td>
+                        <td>${customer.phone || 'Belirtilmemiş'}</td>
+                        <td>${customer.email || 'Belirtilmemiş'}</td>
+                        <td>${customer.note || 'Not yok'}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCustomer('${doc.id}')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    `;
+                    
+                    customersTable.appendChild(row);
+                });
+                
+                // Update customer selects
+                updateCustomerSelect();
+                updateReportCustomerSelect();
+                
+            } catch (error) {
+                console.error('Müşteriler yüklenirken hata:', error);
+            }
+        }
+
+        // Add Customer Function
+        async function handleAddCustomer(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+            const email = document.getElementById('customerEmail').value.trim();
+            const note = document.getElementById('customerNote').value.trim();
+            
+            if (!name) {
+                showToast('Hata', 'Lütfen müşteri adını girin!');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                await db.collection('customers').add({
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    note: note,
+                    createdBy: currentUser.id,
+                    createdAt: new Date().toISOString()
+                });
+                
+                // Reset form
+                document.getElementById('addCustomerForm').reset();
+                document.getElementById('addCustomerModal').classList.remove('active');
+                
+                // Reload customers
+                await Promise.all([
+                    loadCustomers(),
+                    loadDashboardData()
+                ]);
+                
+                showToast('Başarılı', 'Müşteri başarıyla eklendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Müşteri eklenirken hata:', error);
+                showToast('Hata', 'Müşteri eklenirken bir hata oluştu!');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Müşteriyi Kaydet';
+            }
+        }
+
+        async function deleteCustomer(customerId) {
+            if (!confirm('Bu müşteriyi silmek istediğinize emin misiniz?')) return;
+            
+            try {
+                await db.collection('customers').doc(customerId).delete();
+                showToast('Başarılı', 'Müşteri başarıyla silindi!');
+                playSound(notificationSound);
+                await Promise.all([
+                    loadCustomers(),
+                    loadDashboardData()
+                ]);
+            } catch (error) {
+                console.error('Müşteri silinirken hata:', error);
+                showToast('Hata', 'Müşteri silinirken bir hata oluştu!');
+            }
+        }
+
+        // Update Customer Select
+        function updateCustomerSelect() {
+            const select = document.getElementById('saleCustomer');
+            select.innerHTML = '<option value="">Müşteri seçin...</option>';
+            
+            customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.id;
+                option.textContent = `${customer.name} ${customer.phone ? `(${customer.phone})` : ''}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Load Sales
+        async function loadSales() {
+            try {
+                let query = db.collection('sales').orderBy('createdAt', 'desc');
+                if (!isAdmin) {
+                    query = query.where('sellerId', '==', currentUser.id);
+                }
+                
+                const snapshot = await query.get();
+                sales = [];
+                salesHistoryTable.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const sale = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    sales.push(sale);
+                    
+                    const date = sale.createdAt ? new Date(sale.createdAt).toLocaleDateString('tr-TR') : 'Belirtilmemiş';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${sale.productName || 'Ürün'}</td>
+                        <td>${sale.customerName || 'Müşteri'}</td>
+                        <td>${sale.quantity || 1}</td>
+                        <td>${(sale.unitPrice || 0).toFixed(2)} TL</td>
+                        <td>${(sale.total || 0).toFixed(2)} TL</td>
+                        <td>${date}</td>
+                        <td>${sale.sellerName || 'Satıcı'}</td>
+                    `;
+                    
+                    salesHistoryTable.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Satışlar yüklenirken hata:', error);
+            }
+        }
+
+        // New Sale Form
+        document.getElementById('newSaleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productId = document.getElementById('saleProduct').value;
+            const customerId = document.getElementById('saleCustomer').value;
+            const quantity = parseInt(document.getElementById('saleQuantity').value);
+            
+            if (!productId || !customerId || !quantity || quantity < 1) {
+                showToast('Hata', 'Lütfen tüm alanları doğru şekilde doldurun!');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                // Get product and customer details
+                const product = products.find(p => p.id === productId);
+                const customer = customers.find(c => c.id === customerId);
+                
+                if (!product || !customer) {
+                    throw new Error('Ürün veya müşteri bulunamadı!');
+                }
+                
+                const total = product.price * quantity;
+                
+                // Save sale to Firestore
+                await db.collection('sales').add({
+                    productId: productId,
+                    productName: product.name,
+                    customerId: customerId,
+                    customerName: customer.name,
+                    quantity: quantity,
+                    unitPrice: product.price,
+                    total: total,
+                    sellerId: currentUser.id,
+                    sellerName: currentUser.displayName || currentUser.email,
+                    createdAt: new Date().toISOString()
+                });
+                
+                // Reset form
+                document.getElementById('newSaleForm').reset();
+                document.getElementById('saleQuantity').value = 1;
+                
+                // Reload data
+                await Promise.all([
+                    loadSales(),
+                    loadDashboardData()
+                ]);
+                
+                showToast('Başarılı', 'Satış başarıyla kaydedildi!');
+                playSound(saleSound);
+                
+            } catch (error) {
+                console.error('Satış kaydedilirken hata:', error);
+                showToast('Hata', 'Satış kaydedilirken bir hata oluştu!');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Satış Yap';
+            }
+        });
+
+        // Load Users - Tüm kullanıcılar yükleniyor (admin olmayanlar da)
+        async function loadUsers() {
+            try {
+                const snapshot = await db.collection('users').get();
+                users = {};
+                usersTable.innerHTML = '';
+                usersList.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const user = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    users[doc.id] = user;
+                    
+                    // Add to admin table (sadece admin görür)
+                    if (isAdmin) {
+                        const row = document.createElement('tr');
+                        
+                        const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('tr-TR') : 'Belirtilmemiş';
+                        const lastLoginDate = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('tr-TR') : 'Hiç giriş yapmadı';
+                        
+                        row.innerHTML = `
+                            <td>${user.email || user.username}</td>
+                            <td>${user.fullName || 'Belirtilmemiş'}</td>
+                            <td>${user.email || 'Belirtilmemiş'}</td>
+                            <td>${user.role || 'Satıcı'}</td>
+                            <td>${createdDate}</td>
+                            <td>${lastLoginDate}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${doc.id}')">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                            </td>
+                        `;
+                        
+                        usersTable.appendChild(row);
+                    }
+                    
+                    // Add to users sidebar (only if not current user)
+                    if (user.id !== currentUser.id) {
+                        const userItem = document.createElement('div');
+                        userItem.className = `user-item ${user.online ? 'active' : ''}`;
+                        userItem.dataset.userId = doc.id;
+                        
+                        // Check if there are unread messages from this user
+                        const hasUnreadMessages = unreadPrivateMessages.has(user.id);
+                        
+                        userItem.innerHTML = `
+                            <img src="${user.photoURL || `https://ui-avatars.com/api/?name=${user.fullName || user.email}&background=7c3aed&color=fff`}" 
+                                 class="user-item-avatar" 
+                                 alt="${user.fullName || user.email}">
+                            <div class="user-item-info">
+                                <h4>${user.fullName || user.email}</h4>
+                                <p>${user.role || 'Satıcı'} - ${user.online ? '🟢 Çevrimiçi' : '🔴 Çevrimdışı'}</p>
+                            </div>
+                            <div class="user-item-status ${user.online ? 'online' : 'offline'}"></div>
+                            <div class="message-notification ${hasUnreadMessages ? 'active blink' : ''}" 
+                                 id="notification-${user.id}"></div>
+                        `;
+                        
+                        userItem.addEventListener('click', () => {
+                            // Clear notification when opening chat
+                            clearPrivateChatNotification(user.id);
+                            openPrivateChat(user);
+                        });
+                        
+                        usersList.appendChild(userItem);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Kullanıcılar yüklenirken hata:', error);
+            }
+        }
+
+        // Add User Function - Sadece Firestore, Firebase Auth YOK
+        async function handleAddUser(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('newEmail').value.trim();
+            const fullName = document.getElementById('newFullName').value.trim();
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+            
+            if (!email || !fullName || !password || password.length < 6) {
+                showToast('Hata', 'Lütfen tüm alanları doldurun ve şifre en az 6 karakter olmalı!');
+                return;
+            }
+            
+            const createUserBtn = document.getElementById('createUserBtn');
+            createUserBtn.disabled = true;
+            createUserBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                // Check if email already exists
+                const existingUser = await db.collection('users')
+                    .where('email', '==', email)
+                    .get();
+                
+                if (!existingUser.empty) {
+                    throw new Error('Bu email adresi zaten kullanılıyor!');
+                }
+                
+                // Save user data to Firestore ONLY
+                const userData = {
+                    email: email,
+                    fullName: fullName,
+                    password: password,
+                    role: role,
+                    displayName: fullName,
+                    photoURL: '',
+                    online: false,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastSeen: null
+                };
+                
+                await db.collection('users').add(userData);
+                
+                // Reset form
+                document.getElementById('addUserForm').reset();
+                document.getElementById('addUserModal').classList.remove('active');
+                
+                // Reload users
+                await loadUsers();
+                
+                showToast('Başarılı', 'Kullanıcı başarıyla oluşturuldu!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Kullanıcı oluşturulurken hata:', error);
+                let errorMessage = 'Kullanıcı oluşturulurken bir hata oluştu!';
+                if (error.message === 'Bu email adresi zaten kullanılıyor!') {
+                    errorMessage = error.message;
+                }
+                showToast('Hata', errorMessage);
+            } finally {
+                createUserBtn.disabled = false;
+                createUserBtn.innerHTML = '<i class="fas fa-user-plus"></i> Kullanıcı Oluştur';
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) return;
+            
+            try {
+                await db.collection('users').doc(userId).delete();
+                
+                showToast('Başarılı', 'Kullanıcı başarıyla silindi!');
+                playSound(notificationSound);
+                await loadUsers();
+            } catch (error) {
+                console.error('Kullanıcı silinirken hata:', error);
+                showToast('Hata', 'Kullanıcı silinirken bir hata oluştu!');
+            }
+        }
+
+        // Private Chat Functions
+        function getChatId(userId1, userId2) {
+            return [userId1, userId2].sort().join('_');
+        }
+
+        function openPrivateChat(user) {
+            selectedUserForChat = user;
+            privateChatTitle.textContent = `${user.fullName || user.email} ile Sohbet`;
+            privateChatMessages.innerHTML = '';
+            privateChatInput.value = '';
+            
+            // Load previous messages
+            loadPrivateMessages(user.id);
+            
+            // Open modal
+            privateChatModal.classList.add('active');
+        }
+
+        async function loadPrivateMessages(otherUserId) {
+            const chatId = getChatId(currentUser.id, otherUserId);
+            
+            // Clean up previous listener
+            if (privateChatListener) {
+                privateChatListener();
+            }
+            
+            // Set up real-time listener
+            privateChatListener = db.collection('private_messages')
+                .doc(chatId)
+                .collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot((snapshot) => {
+                    privateChatMessages.innerHTML = '';
+                    
+                    // Mark messages as read
+                    const batch = db.batch();
+                    
+                    snapshot.forEach((doc) => {
+                        const message = doc.data();
+                        
+                        // Mark as read if receiver is current user
+                        if (message.receiverId === currentUser.id && !message.read) {
+                            batch.update(doc.ref, { read: true });
+                        }
+                        
+                        addPrivateMessageToChat(message);
+                    });
+                    
+                    // Commit batch update
+                    if (!snapshot.empty) {
+                        batch.commit().catch(console.error);
+                    }
+                    
+                    // Scroll to bottom
+                    setTimeout(() => {
+                        privateChatMessages.scrollTop = privateChatMessages.scrollHeight;
+                    }, 100);
+                });
+                
+            messageListeners.push(privateChatListener);
+        }
+
+        function addPrivateMessageToChat(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.senderId === currentUser.id ? 'sent' : 'received'}`;
+            
+            const time = message.timestamp ? new Date(message.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : 'Şimdi';
+            
+            let fileContent = '';
+            if (message.fileUrl) {
+                if (message.fileType === 'image') {
+                    fileContent = `
+                        <div class="chat-file">
+                            <p><i class="fas fa-image"></i> ${message.fileName || 'Resim'}</p>
+                            <img src="${message.fileUrl}" alt="Gönderilen resim" style="max-width: 200px; border-radius: 8px; margin-top: 5px;">
+                        </div>
+                    `;
+                } else {
+                    fileContent = `
+                        <div class="chat-file">
+                            <p><i class="fas fa-file"></i> ${message.fileName || 'Dosya'}</p>
+                            <a href="${message.fileUrl}" download="${message.fileName || 'dosya'}" target="_blank">
+                                <i class="fas fa-download"></i> Dosyayı İndir
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+            
+            messageDiv.innerHTML = `
+                ${message.senderId !== currentUser.id ? `<div class="message-sender">${message.senderName}</div>` : ''}
+                <div>${message.text}</div>
+                ${fileContent}
+                <div style="font-size: 11px; text-align: right; margin-top: 5px; opacity: 0.7;">${time}</div>
+            `;
+            
+            privateChatMessages.appendChild(messageDiv);
+        }
+
+        async function sendPrivateMessage() {
+            const text = privateChatInput.value.trim();
+            if (!text || !selectedUserForChat) return;
+            
+            try {
+                const chatId = getChatId(currentUser.id, selectedUserForChat.id);
+                const messageData = {
+                    text: text,
+                    senderId: currentUser.id,
+                    senderName: currentUser.displayName || currentUser.email,
+                    receiverId: selectedUserForChat.id,
+                    timestamp: new Date().toISOString(),
+                    read: false
+                };
+                
+                await db.collection('private_messages').doc(chatId).collection('messages').add(messageData);
+                
+                privateChatInput.value = '';
+                playSound(messageSound);
+                
+            } catch (error) {
+                console.error('Private mesaj gönderilirken hata:', error);
+                showToast('Hata', 'Mesaj gönderilirken bir hata oluştu!');
+            }
+        }
+
+        // Profile Management
+        async function loadProfile() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.id).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    document.getElementById('profileUsername').value = userData.email;
+                    document.getElementById('profileName').value = userData.displayName || userData.email;
+                    document.getElementById('profileBio').value = userData.bio || '';
+                    document.getElementById('profileImagePreview').src = userData.photoURL || `https://ui-avatars.com/api/?name=${userData.displayName || userData.email}&background=7c3aed&color=fff&size=150`;
+                }
+            } catch (error) {
+                console.error('Profil yüklenirken hata:', error);
+            }
+        }
+
+        document.getElementById('profileImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('profileImagePreview').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const displayName = document.getElementById('profileName').value.trim();
+            const bio = document.getElementById('profileBio').value.trim();
+            const imageFile = document.getElementById('profileImage').files[0];
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                const updateData = {
+                    displayName: displayName,
+                    bio: bio,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // Upload new profile image if selected
+                if (imageFile) {
+                    const photoURL = await fileToBase64(imageFile);
+                    updateData.photoURL = photoURL;
+                    userAvatar.src = photoURL;
+                }
+                
+                await db.collection('users').doc(currentUser.id).update(updateData);
+                Object.assign(currentUser, updateData);
+                userDisplayName.textContent = displayName;
+                
+                // Update localStorage
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                await loadUsers();
+                showToast('Başarılı', 'Profil başarıyla güncellendi!');
+                playSound(notificationSound);
+                
+            } catch (error) {
+                console.error('Profil güncellenirken hata:', error);
+                showToast('Hata', 'Profil güncellenirken bir hata oluştu!');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Profili Güncelle';
+            }
+        });
+
+        // Chat System - DÜZELTİLDİ: Mesaj çoğalması sorunu
+        async function loadMessages() {
+            try {
+                // Clear existing listener if any
+                const existingListenerIndex = messageListeners.findIndex(l => l.name === 'generalChat');
+                if (existingListenerIndex > -1) {
+                    messageListeners[existingListenerIndex]();
+                    messageListeners.splice(existingListenerIndex, 1);
+                }
+                
+                const snapshot = await db.collection('messages')
+                    .orderBy('timestamp', 'desc')
+                    .limit(50)
+                    .get();
+                
+                messages = [];
+                chatMessages.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    messages.unshift({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Add messages in correct order
+                messages.forEach(message => {
+                    addMessageToChat(message);
+                });
+                
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
+                
+            } catch (error) {
+                console.error('Mesajlar yüklenirken hata:', error);
+            }
+        }
+
+        function addMessageToChat(message) {
+            // Check if message already exists
+            if (document.querySelector(`[data-message-id="${message.id}"]`)) {
+                return;
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.senderId === currentUser.id ? 'sent' : 'received'}`;
+            messageDiv.dataset.messageId = message.id;
+            
+            const time = message.timestamp ? new Date(message.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : 'Şimdi';
+            
+            let fileContent = '';
+            if (message.fileUrl) {
+                if (message.fileType === 'image') {
+                    fileContent = `
+                        <div class="chat-file">
+                            <p><i class="fas fa-image"></i> Resim</p>
+                            <img src="${message.fileUrl}" alt="Gönderilen resim" style="max-width: 200px; border-radius: 8px; margin-top: 5px;">
+                        </div>
+                    `;
+                } else {
+                    fileContent = `
+                        <div class="chat-file">
+                            <p><i class="fas fa-file"></i> ${message.fileName || 'Dosya'}</p>
+                            <a href="${message.fileUrl}" download="${message.fileName || 'dosya'}" target="_blank">
+                                <i class="fas fa-download"></i> Dosyayı İndir
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+            
+            messageDiv.innerHTML = `
+                ${message.senderId !== currentUser.id ? `<div class="message-sender">${message.senderName}</div>` : ''}
+                <div>${message.text}</div>
+                ${fileContent}
+                <div style="font-size: 11px; text-align: right; margin-top: 5px; opacity: 0.7;">${time}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            try {
+                const messageData = {
+                    text: text,
+                    senderId: currentUser.id,
+                    senderName: currentUser.displayName || currentUser.email,
+                    timestamp: new Date().toISOString()
+                };
+                
+                await db.collection('messages').add(messageData);
+                
+                chatInput.value = '';
+                playSound(messageSound);
+                
+            } catch (error) {
+                console.error('Mesaj gönderilirken hata:', error);
+                showToast('Hata', 'Mesaj gönderilirken bir hata oluştu!');
+            }
+        }
+
+        // Notification Functions
+        function showGeneralChatNotification() {
+            if (!unreadGeneralMessages) {
+                unreadGeneralMessages = true;
+                chatNotificationDot.style.display = 'block';
+                chatNotificationDot.classList.add('blink');
+            }
+        }
+
+        function clearGeneralChatNotification() {
+            unreadGeneralMessages = false;
+            chatNotificationDot.style.display = 'none';
+            chatNotificationDot.classList.remove('blink');
+        }
+
+        function showPrivateChatNotification(userId) {
+            if (!unreadPrivateMessages.has(userId)) {
+                unreadPrivateMessages.add(userId);
+                const notificationDot = document.getElementById(`notification-${userId}`);
+                if (notificationDot) {
+                    notificationDot.classList.add('active', 'blink');
+                }
+            }
+        }
+
+        function clearPrivateChatNotification(userId) {
+            unreadPrivateMessages.delete(userId);
+            const notificationDot = document.getElementById(`notification-${userId}`);
+            if (notificationDot) {
+                notificationDot.classList.remove('active', 'blink');
+            }
+        }
+
+        // Setup Real-time Listeners - GÜNCELLENDİ
+        function setupRealTimeListeners() {
+            // Real-time sales updates
+            let salesQuery = db.collection('sales').orderBy('createdAt', 'desc');
+            if (!isAdmin) {
+                salesQuery = salesQuery.where('sellerId', '==', currentUser.id);
+            }
+            
+            const salesListener = salesQuery.onSnapshot((snapshot) => {
+                loadSales();
+                loadDashboardData();
+                
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === 'added' && change.doc.data().sellerId !== currentUser.id) {
+                        const sale = change.doc.data();
+                        showToast('Yeni Satış', `${sale.sellerName || 'Bir satıcı'} yeni satış yaptı!`);
+                        playSound(saleSound);
+                    }
+                });
+            });
+            messageListeners.push(salesListener);
+            
+            // Real-time messages - DÜZELTİLDİ: Tek listener
+            const messagesListener = db.collection('messages')
+                .orderBy('timestamp')
+                .limit(50)
+                .onSnapshot((snapshot) => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const message = change.doc.data();
+                            
+                            // Only add if not already in DOM
+                            if (!document.querySelector(`[data-message-id="${change.doc.id}"]`)) {
+                                addMessageToChat(message);
+                                
+                                setTimeout(() => {
+                                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                                }, 100);
+                                
+                                // Play sound and show notification for new messages from others
+                                if (message.senderId !== currentUser.id) {
+                                    playSound(messageSound);
+                                    
+                                    // Show notification if not on chat page
+                                    const currentPage = document.querySelector('.page-content:not(.hidden)').id;
+                                    if (currentPage !== 'chatPage') {
+                                        showGeneralChatNotification();
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            messageListeners.push(messagesListener);
+            
+            // Real-time users status (tüm kullanıcılar için)
+            const usersListener = db.collection('users').onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === 'modified') {
+                        const user = change.doc.data();
+                        const userItem = document.querySelector(`.user-item[data-user-id="${change.doc.id}"]`);
+                        if (userItem) {
+                            const status = userItem.querySelector('.user-item-status');
+                            status.className = `user-item-status ${user.online ? 'online' : 'offline'}`;
+                            
+                            const info = userItem.querySelector('.user-item-info p');
+                            if (info) {
+                                info.textContent = `${user.role || 'Satıcı'} - ${user.online ? '🟢 Çevrimiçi' : '🔴 Çevrimdışı'}`;
+                            }
+                            
+                            if (user.online && !users[change.doc.id]?.online) {
+                                showToast('Kullanıcı Çevrimiçi', `${user.fullName || user.email} çevrimiçi oldu!`);
+                                playSound(notificationSound);
+                            }
+                        }
+                        
+                        users[change.doc.id] = user;
+                    }
+                });
+            });
+            messageListeners.push(usersListener);
+            
+            // Real-time announcement updates
+            const announcementListener = db.collection('announcements').doc('current').onSnapshot((doc) => {
+                if (doc.exists && doc.data().active) {
+                    currentAnnouncement = doc.data();
+                    announcementBanner.classList.remove('hidden');
+                    announcementTitle.textContent = currentAnnouncement.title;
+                    announcementText.textContent = currentAnnouncement.text;
+                } else {
+                    announcementBanner.classList.add('hidden');
+                }
+            });
+            messageListeners.push(announcementListener);
+            
+            // Real-time logo updates
+            const logoListener = db.collection('settings').doc('logo').onSnapshot((doc) => {
+                if (doc.exists && doc.data().base64) {
+                    currentLogo = doc.data().base64;
+                    loginLogo.src = currentLogo;
+                    sidebarLogo.src = currentLogo;
+                    welcomeLogo.src = currentLogo;
+                    currentLogoPreview.src = currentLogo;
+                }
+            });
+            messageListeners.push(logoListener);
+            
+            // Real-time private messages for notification
+            if (currentUser) {
+                // Listen for private messages where current user is receiver
+                const privateMessagesQuery = db.collectionGroup('messages')
+                    .where('receiverId', '==', currentUser.id)
+                    .where('read', '==', false);
+                
+                const privateMsgListener = privateMessagesQuery.onSnapshot((snapshot) => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const message = change.doc.data();
+                            
+                            // Show notification for unread private messages
+                            if (message.senderId !== currentUser.id && !message.read) {
+                                showPrivateChatNotification(message.senderId);
+                                playSound(messageSound);
+                                
+                                // Show toast if not in private chat with this user
+                                if (!selectedUserForChat || selectedUserForChat.id !== message.senderId) {
+                                    showToast('Yeni Özel Mesaj', `${message.senderName}'dan mesajınız var!`);
+                                }
+                            }
+                        }
+                    });
+                });
+                messageListeners.push(privateMsgListener);
+            }
+        }
+
+        // Page Loading
+        function loadPage(page) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            
+            const pageElement = document.getElementById(page + 'Page');
+            if (pageElement) {
+                pageElement.classList.remove('hidden');
+                pageTitle.textContent = getPageTitle(page);
+                
+                switch(page) {
+                    case 'dashboard':
+                        loadDashboardData();
+                        break;
+                    case 'adminUsers':
+                        if (!isAdmin) {
+                            showToast('Hata', 'Bu sayfaya erişim yetkiniz yok!');
+                            loadPage('dashboard');
+                            return;
+                        }
+                        loadUsers();
+                        break;
+                    case 'profile':
+                        loadProfile();
+                        break;
+                    case 'reports':
+                        if (!isAdmin) {
+                            showToast('Hata', 'Bu sayfaya erişim yetkiniz yok!');
+                            loadPage('dashboard');
+                            return;
+                        }
+                        break;
+                }
+            }
+        }
+
+        function getPageTitle(page) {
+            const titles = {
+                'dashboard': 'Dashboard',
+                'products': 'Ürünler',
+                'customers': 'Müşteriler',
+                'sales': 'Satışlar',
+                'adminUsers': 'Kullanıcı Yönetimi',
+                'profile': 'Profilim',
+                'chat': 'Sohbet',
+                'reports': 'Raporlar',
+                'settings': 'Ayarlar'
+            };
+            return titles[page] || 'Sayfa';
+        }
+
+        // Report System
+        async function loadReportFilters() {
+            await updateReportCustomerSelect();
+            await updateReportProductSelect();
+        }
+
+        function updateReportCustomerSelect() {
+            reportCustomer.innerHTML = '<option value="">Tüm Müşteriler</option>';
+            customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.id;
+                option.textContent = customer.name;
+                reportCustomer.appendChild(option);
+            });
+        }
+
+        function updateReportProductSelect() {
+            reportProduct.innerHTML = '<option value="">Tüm Ürünler</option>';
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.name;
+                reportProduct.appendChild(option);
+            });
+        }
+
+        async function handleGenerateReport(e) {
+            e.preventDefault();
+            
+            const customerId = reportCustomer.value;
+            const productId = reportProduct.value;
+            const dateFrom = reportDateFrom.value;
+            const dateTo = reportDateTo.value;
+            
+            try {
+                let query = db.collection('sales');
+                
+                // Apply filters
+                if (customerId) {
+                    query = query.where('customerId', '==', customerId);
+                }
+                
+                if (productId) {
+                    query = query.where('productId', '==', productId);
+                }
+                
+                if (dateFrom) {
+                    const fromDate = new Date(dateFrom);
+                    query = query.where('createdAt', '>=', fromDate.toISOString());
+                }
+                
+                if (dateTo) {
+                    const toDate = new Date(dateTo);
+                    toDate.setHours(23, 59, 59, 999);
+                    query = query.where('createdAt', '<=', toDate.toISOString());
+                }
+                
+                const snapshot = await query.orderBy('createdAt', 'desc').get();
+                
+                // Clear previous results
+                reportsTable.innerHTML = '';
+                document.getElementById('reportSummary').style.display = 'none';
+                
+                if (snapshot.empty) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="8" style="text-align: center;">Filtrelerinize uygun satış bulunamadı.</td>`;
+                    reportsTable.appendChild(row);
+                    return;
+                }
+                
+                let totalAmount = 0;
+                let totalSalesCount = 0;
+                
+                snapshot.forEach(doc => {
+                    const sale = doc.data();
+                    totalAmount += sale.total || 0;
+                    totalSalesCount++;
+                    
+                    const date = sale.createdAt ? new Date(sale.createdAt).toLocaleDateString('tr-TR') : 'Belirtilmemiş';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${doc.id.slice(-6)}</td>
+                        <td>${sale.customerName || 'Müşteri'}</td>
+                        <td>${sale.productName || 'Ürün'}</td>
+                        <td>${sale.quantity || 1}</td>
+                        <td>${(sale.unitPrice || 0).toFixed(2)} TL</td>
+                        <td>${(sale.total || 0).toFixed(2)} TL</td>
+                        <td>${date}</td>
+                        <td>${sale.sellerName || 'Satıcı'}</td>
+                    `;
+                    reportsTable.appendChild(row);
+                });
+                
+                // Update summary
+                document.getElementById('summaryTotalSales').textContent = totalSalesCount;
+                document.getElementById('summaryTotalAmount').textContent = totalAmount.toFixed(2) + ' TL';
+                document.getElementById('summaryAverageSale').textContent = (totalSalesCount > 0 ? (totalAmount / totalSalesCount).toFixed(2) : 0) + ' TL';
+                document.getElementById('reportSummary').style.display = 'block';
+                
+                // Generate invoice preview
+                generateInvoicePreview(snapshot);
+                
+            } catch (error) {
+                console.error('Rapor oluşturulurken hata:', error);
+                showToast('Hata', 'Rapor oluşturulurken bir hata oluştu!');
+            }
+        }
+
+        function clearReportFiltersHandler() {
+            reportCustomer.value = '';
+            reportProduct.value = '';
+            reportDateFrom.value = '';
+            reportDateTo.value = '';
+            reportsTable.innerHTML = '';
+            document.getElementById('reportSummary').style.display = 'none';
+            document.getElementById('invoicePreview').classList.add('hidden');
+        }
+
+        function generateInvoicePreview(snapshot) {
+            const invoiceDate = new Date().toLocaleDateString('tr-TR');
+            const invoiceNumber = 'INV-' + Date.now().toString().slice(-6);
+            
+            document.getElementById('invoiceNumber').textContent = invoiceNumber;
+            document.getElementById('invoiceDate').textContent = invoiceDate;
+            document.getElementById('sellerInfo').textContent = `${currentUser.displayName || currentUser.email}\nSatış Paneli`;
+            
+            // Get customer info from first sale
+            let customerInfo = 'Tüm Müşteriler';
+            if (reportCustomer.value) {
+                const customer = customers.find(c => c.id === reportCustomer.value);
+                if (customer) {
+                    customerInfo = `${customer.name}\n${customer.phone || ''}\n${customer.email || ''}`;
+                }
+            }
+            document.getElementById('customerInfo').textContent = customerInfo;
+            
+            // Add invoice items
+            const invoiceItems = document.getElementById('invoiceItems');
+            invoiceItems.innerHTML = '';
+            
+            let total = 0;
+            let itemCount = 0;
+            
+            snapshot.forEach(doc => {
+                if (itemCount >= 10) return; // Limit to 10 items for preview
+                
+                const sale = doc.data();
+                const itemTotal = sale.total || 0;
+                total += itemTotal;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sale.productName || 'Ürün'}</td>
+                    <td>${(sale.unitPrice || 0).toFixed(2)} TL</td>
+                    <td>${sale.quantity || 1}</td>
+                    <td>${itemTotal.toFixed(2)} TL</td>
+                `;
+                invoiceItems.appendChild(row);
+                itemCount++;
+            });
+            
+            document.getElementById('invoiceTotal').textContent = total.toFixed(2) + ' TL';
+            document.getElementById('invoicePreview').classList.remove('hidden');
+        }
+
+        // Utility Functions
+        function playSound(audioElement) {
+            if (soundEnabled) {
+                audioElement.currentTime = 0;
+                audioElement.play().catch(e => console.log('Ses çalınamadı:', e));
+            }
+        }
+
+        function showToast(title, message) {
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Make functions available globally
+        window.deleteProduct = deleteProduct;
+        window.deleteCustomer = deleteCustomer;
+        window.deleteUser = deleteUser;
+        window.loadPage = loadPage;
+        window.openPrivateChat = openPrivateChat;
+    </script>
+</body>
+</html>
