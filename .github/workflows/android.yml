@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Sovcum APK
 on: [push]
 jobs:
   build:
@@ -13,34 +13,42 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17' # Hata veren 21 yerine en stabil sürüm
+          java-version: '17'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Build Process
+      - name: Prepare Sovcum Project
         run: |
+          # 1. Klasör hazırlığı
           mkdir -p www
-          cp index.html www/
-          cp -r *.css www/ 2>/dev/null || true
-          cp -r *.js www/ 2>/dev/null || true
+          cp -r * www/ 2>/dev/null || true
           
+          # 2. Proje kimliği
           npm init -y
-          npm install @capacitor/core@5 @capacitor/cli@5 @capacitor/android@5
+          npm install @capacitor/core@5 @capacitor/cli@5 @capacitor/android@5 @capacitor/assets --save-dev
           
-          npx cap init "Panelim" "com.mcan.panel" --web-dir www
+          # Uygulama ismi 'Şovcum' olarak burada belirleniyor
+          npx cap init "Şovcum" "com.sovcum.app" --web-dir www
+          
           npx cap add android
+          
+          # 3. İkonları üret (icon.png dosyan varsa kalpli yapar)
+          if [ -f "icon.png" ]; then
+            npx capacitor-assets generate --android
+          fi
+          
           npx cap copy android
           
-          # Android klasöründeki Java uyumsuzluğunu zorla düzelt
+          # 4. APK Pişirme
           cd android
           echo "org.gradle.java.home=${JAVA_HOME_17_X64}" >> gradle.properties
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload Sovcum APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-panel-apk
+          name: Sovcum-Uygulamasi
           path: android/app/build/outputs/apk/debug/app-debug.apk
