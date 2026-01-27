@@ -3,24 +3,39 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
-      - name: Setup Java
-        uses: actions/setup-java@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Build with Interactive Fix
+          node-version: '20'
+
+      - name: Prepare Project and Build APK
         run: |
-          npm init -y
+          # Eğer package.json yoksa oluştur
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+          
+          # Gerekli paketleri yükle
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "MyPanel" "com.example.mypanel" --web-dir .
+          
+          # Capacitor'ı sıfırdan kur (web dizini olarak bulunduğun yeri seç)
+          npx cap init "Panelim" "com.mcan.panel" --web-dir .
+          
+          # Android platformunu ekle ve dosyaları kopyala
           npx cap add android
           npx cap copy android
+          
+          # APK'yı oluştur
           cd android && ./gradlew assembleDebug
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-panel-app
+          name: my-panel-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
