@@ -16,22 +16,29 @@ jobs:
 
       - name: Prepare Project and Build APK
         run: |
-          # Eğer package.json yoksa oluştur
+          # 1. Klasör yapısını temizle ve hazırla
+          mkdir -p www
+          cp index.html www/
+          # Varsa diğer dosyaları da kopyala (css, js gibi)
+          cp -r *.css www/ 2>/dev/null || true
+          cp -r *.js www/ 2>/dev/null || true
+          
+          # 2. Package.json yoksa oluştur
           if [ ! -f package.json ]; then
             npm init -y
           fi
           
-          # Gerekli paketleri yükle
+          # 3. Gerekli paketleri yükle
           npm install @capacitor/core @capacitor/cli @capacitor/android
           
-          # Capacitor'ı sıfırdan kur (web dizini olarak bulunduğun yeri seç)
-          npx cap init "Panelim" "com.mcan.panel" --web-dir .
+          # 4. Capacitor'ı 'www' klasörünü görecek şekilde başlat
+          npx cap init "Panelim" "com.mcan.panel" --web-dir www
           
-          # Android platformunu ekle ve dosyaları kopyala
+          # 5. Android platformunu ekle ve dosyaları kopyala
           npx cap add android
           npx cap copy android
           
-          # APK'yı oluştur
+          # 6. APK'yı oluştur
           cd android && ./gradlew assembleDebug
 
       - name: Upload APK
