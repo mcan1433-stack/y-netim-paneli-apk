@@ -1,0 +1,11 @@
+{
+  "appId": "com.sovcum.app",
+  "appName": "Şovcum",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}
